@@ -7,13 +7,31 @@ import "hardhat/console.sol";
 contract PatSwishPortal {
     uint256 totalSwishes;
 
-    constructor() {
-        console.log("Yo yo, I am a contract and I am smart");
+    event NewSwish(address indexed from, uint256 timestamp, string message);
+
+    struct Swish {
+        address swisher; 
+        string message;
+        uint256 timestamp;
     }
 
-    function swish() public {
+    Swish[] swishes;
+
+    constructor() {
+        console.log("I am one of the smartest contracts. Woo!");
+    }
+
+    function swish(string memory _message) public {
         totalSwishes += 1;
-        console.log("%s has swished!", msg.sender);
+        console.log("%s swished w/ message %s", msg.sender, _message);
+
+        swishes.push(Swish(msg.sender, _message, block.timestamp));
+
+        emit NewSwish(msg.sender, block.timestamp, _message);
+    }
+
+    function getAllSwishes() public view returns (Swish[] memory) {
+        return swishes;
     }
 
     function getTotalSwishes() public view returns (uint256) {

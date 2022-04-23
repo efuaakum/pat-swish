@@ -1,25 +1,23 @@
 async function main() {
-  const [owner, randomPerson] = await hre.ethers.getSigners();
   const PatSwishContractFactory = await hre.ethers.getContractFactory("PatSwishPortal");
   const patSwishContract = await PatSwishContractFactory.deploy();
-
   await patSwishContract.deployed();
 
-  console.log("Contract deployed to:", patSwishContract.address);
-  console.log("Contract deployed by:", owner.address);
+  console.log("Contract change 2 deployed to:", patSwishContract.address);
 
   let swishCount;
   swishCount = await patSwishContract.getTotalSwishes();
+  console.log(swishCount.toNumber());
 
-  let swishTxn = await patSwishContract.swish();
+  let swishTxn = await patSwishContract.swish("Our first message!");
   await swishTxn.wait();
 
-  swishCount = await patSwishContract.getTotalSwishes();
-
-  swishTxn = await patSwishContract.connect(randomPerson).swish();
+  const [_, randomPerson] = await hre.ethers.getSigners();
+  swishTxn = await patSwishContract.connect(randomPerson).swish("Our second message!");
   await swishTxn.wait();
 
-  swishCount = await patSwishContract.getTotalSwishes();
+  let allSwishes = await patSwishContract.getAllSwishes();
+  console.log(allSwishes);
 }
 
 main().catch((error) => {
